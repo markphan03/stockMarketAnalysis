@@ -9,12 +9,12 @@ classdef Analysis
     end
     
     methods
-        function obj = Analysis(stockName, stockRecord)
+        function obj = Analysis(stockName, stockRecord, totalTestedData)
             %STOCKANALYSIS Construct an instance of this class
             %   Detailed explanation goes here
             obj.stockName = stockName;
             obj.stockRecord = stockRecord;
-            obj.totalTestedData = 4;
+            obj.totalTestedData = totalTestedData;
         end
 
         function [dates, closedPrices] = getDateAndClosedPrices(obj)

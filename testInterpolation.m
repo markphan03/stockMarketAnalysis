@@ -4,9 +4,8 @@ clc
 Xp = [2, 2.75, 4];
 Yp = [0.5, 4/11, 0.25];
 P_interpolation = InterpolatedMethods(Xp, Yp);
-polynomial_function = P_interpolation.lagrangePolynomial();
 disp("Polynomial function interpolates x = 2.5")
-result = polynomial_function(2.5);
+result = P_interpolation.lagrangePolynomial(2.5);
 disp(result);
 
 % Cubic interpolation - example from slide pg.8 Least Square Approximation

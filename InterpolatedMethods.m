@@ -30,7 +30,6 @@ classdef InterpolatedMethods
             end
         end
 
-
         function piecewise_function = piecewiseLinearApproximation(obj)
             X = obj.X;
             Y = obj.Y;

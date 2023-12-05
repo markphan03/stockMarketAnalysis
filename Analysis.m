@@ -1,7 +1,4 @@
-classdef Analysis
-    %STOCKANALYSIS Summary of this class goes here
-    %   Detailed explanation goes here
-    
+classdef Analysis    
     properties
         stockName
         stockRecord
@@ -64,6 +61,30 @@ classdef Analysis
 
             cubic_function = interpolation.leastSquareApproximationCubic();
 
+            % Interpolation
+            % Calculate interpolated value
+            Y_interpolated_polynomial = zeros(totalTrainedData, 1);
+            for i = 1: totalTrainedData
+                Y_interpolated_polynomial(i) = interpolation.lagrangePolynomial(i);
+            end
+
+            Y_interpolated_linear = zeros(totalTrainedData, 1);
+            for i = 1: totalTrainedData
+                Y_interpolated_linear(i) = linear_function(i);
+            end
+
+            Y_interpolated_cubic = zeros(totalTrainedData, 1);
+            for i = 1: totalTrainedData
+                Y_interpolated_cubic(i) = cubic_function(i);
+            end
+
+            dates_trained = dates(1: totalTrainedData);
+
+            % Plot graph
+            is_interpolation = 1;
+            plotGraph(obj, dates_trained, Y_trained, Y_interpolated_polynomial, Y_interpolated_linear, Y_interpolated_cubic, is_interpolation); 
+            
+            % Extrapolation
             % Calculate expected value
             Y_expected_polynomial = zeros(totalTestedData, 1);
             for i = 1: totalTestedData
@@ -83,7 +104,9 @@ classdef Analysis
             dates_tested = dates((totalTrainedData + 1): end);
 
             % Plot graph
-            plotGraph(obj, dates_tested, Y_tested, Y_expected_polynomial, Y_expected_linear, Y_expected_cubic);
+            is_interpolation = 0;
+            plotGraph(obj, dates_tested, Y_tested, Y_expected_polynomial, Y_expected_linear, Y_expected_cubic, is_interpolation);
+           
 
             % Perform RMSD
             RMSD_polynomial = obj.rootMeanSquareDeviation(Y_tested, Y_expected_polynomial);
@@ -140,55 +163,69 @@ classdef Analysis
             fprintf("Actual maximum profit is $%.4f\n", actualMaxProfit);
         end
         
-        function plotGraph(obj, dates_tested, Y_tested, Y_expected_polynomial, Y_expected_linear, Y_expected_cubic)
+        function plotGraph(obj, dates, Y, Y_polynomial, Y_linear, Y_cubic, is_interpolation)
             % Assuming you have already defined your data and interpolation methods
 
             % Figure 1: Test data and Polynomial Interpolation
             figure;
-            plot(dates_tested, Y_tested, 'b.', 'MarkerSize', 20); % blue
+            plot(dates, Y, 'b.', 'MarkerSize', 15); % blue
             hold on;
-            plot(dates_tested, Y_expected_polynomial, 'm.-', 'LineWidth', 1.5, 'MarkerSize', 15);
+            plot(dates, Y_polynomial, 'm-', 'LineWidth', 1.5, 'MarkerSize', 15);
             % datetick('x', 'yyyy-mm-dd', 'keepticks');
             xlabel('Date');
             ylabel('Price');
             title(obj.stockName);
             legend('Actual Stock Price', 'Polynomial Function');
             grid on;
-            set(gcf, 'Name', 'Polynomial Extrapolation'); % Set figure name
+            if (is_interpolation == 1)
+                set(gcf, 'Name', 'Polynomial Interpolation'); % Set figure name
+            else 
+                set(gcf, 'Name', 'Polynomial Extrapolation'); % Set figure name
+            end
+            
             % Set y-axis range
-            maxY_axis = max(Y_expected_polynomial);
+            maxY_axis = max(Y_polynomial);
             ylim([0 maxY_axis]);
             
             % Figure 2: Test data and Piecewise Linear Interpolation
             figure;
-            plot(dates_tested, Y_tested, 'b.', 'MarkerSize', 20); % blue
+            plot(dates, Y, 'b.', 'MarkerSize', 15); % blue
             hold on;
-            plot(dates_tested, Y_expected_linear, 'r.-', 'LineWidth', 1.5, 'MarkerSize', 15);
+            plot(dates, Y_linear, 'r-', 'LineWidth', 1.5, 'MarkerSize', 15);
             % datetick('x', 'yyyy-mm-dd', 'keepticks');
             xlabel('Date');
             ylabel('Price');
             title(obj.stockName);
             legend('Actual Stock Price', 'Linear Function');
             grid on;
-            set(gcf, 'Name', 'Linear Extrapolation'); % Set figure name
+            if (is_interpolation == 1)
+                set(gcf, 'Name', 'Linear Interpolation'); % Set figure name
+            else
+                set(gcf, 'Name', 'Linear Extrapolation'); % Set figure name
+            end
             % Set y-axis range
-            maxY_axis = max(Y_expected_linear);
+            maxY_axis = max(Y_linear);
             ylim([0 maxY_axis]);
             
             % Figure 3: Test data and Least Square Cubic Interpolation
             figure;
-            plot(dates_tested, Y_tested, 'b.', 'MarkerSize', 20); % blue
+            plot(dates, Y, 'b.', 'MarkerSize', 15); % blue
             hold on;
-            plot(dates_tested, Y_expected_cubic, 'k.-', 'LineWidth', 1.5, 'MarkerSize', 15);
+            plot(dates, Y_cubic, 'k-', 'LineWidth', 1.5, 'MarkerSize', 15);
             % datetick('x', 'yyyy-mm-dd', 'keepticks');
             xlabel('Date');
             ylabel('Price');
             title(obj.stockName);
             legend('Actual Stock Price', 'Cubic Function');
             grid on;
-            set(gcf, 'Name', 'Cubic Extrapolation'); % Set figure name
+            if (is_interpolation == 1)
+                set(gcf, 'Name', 'Cubic Interpolation'); % Set figure name
+            else
+                set(gcf, 'Name', 'Cubic Extrapolation'); % Set figure name
+            end
+            
             % Set y-axis range
-            maxY_axis = max(Y_expected_cubic);
+            maxY_axis = max(Y_cubic);
             ylim([0 maxY_axis]);
         end
 

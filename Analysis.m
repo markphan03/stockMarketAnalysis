@@ -60,8 +60,6 @@ classdef Analysis
             % Create interpolation method
             interpolation = InterpolatedMethods(X_trained, Y_trained);
 
-            polynomial_function = interpolation.lagrangePolynomial();
-
             linear_function = interpolation.piecewiseLinearApproximation();
 
             cubic_function = interpolation.leastSquareApproximationCubic();
@@ -69,7 +67,7 @@ classdef Analysis
             % Calculate expected value
             Y_expected_polynomial = zeros(totalTestedData, 1);
             for i = 1: totalTestedData
-                Y_expected_polynomial(i) = polynomial_function(totalTrainedData + i);
+                Y_expected_polynomial(i) = interpolation.lagrangePolynomial(totalTrainedData + i);
             end
 
             Y_expected_linear = zeros(totalTestedData, 1);

@@ -1,7 +1,7 @@
 clc
-totalTestedData = 6;
-tesla = Analysis('Tesla Stock', 'TSLA-1 month.csv', totalTestedData);
+totalTestedData = 30;
+tesla = Analysis('Tesla Stock', 'TSLA-6 month.csv', totalTestedData);
 tesla.runAnalysis();
 
-apple = Analysis('Apple Stock', 'AAPL-1 month.csv', totalTestedData);
+apple = Analysis('Apple Stock', 'AAPL-6 month.csv', totalTestedData);
 apple.runAnalysis();

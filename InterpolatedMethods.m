@@ -13,21 +13,23 @@ classdef InterpolatedMethods
             obj.Y = Y;
         end
 
-        function polynomial_function = lagrangePolynomial(obj)
+        function interpolated_value = lagrangePolynomial(obj, x_val)
             X = obj.X;
             Y = obj.Y;
             n = numel(X);
-            polynomial_function = @(x) 0;
+            interpolated_value = 0;
+            
             for i = 1:n
-                product = @(x) Y(i);
+                product = Y(i);
                 for j = 1:n
                     if i ~= j
-                        product = @(x) product(x) * (x - X(j)) / (X(i) - X(j));
+                        product = product * (x_val - X(j)) / (X(i) - X(j));
                     end
-                end 
-                polynomial_function = @(x) polynomial_function(x) + product(x);
+                end
+                interpolated_value = interpolated_value + product;
             end
         end
+
 
         function piecewise_function = piecewiseLinearApproximation(obj)
             X = obj.X;

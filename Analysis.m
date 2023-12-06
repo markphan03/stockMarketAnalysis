@@ -57,7 +57,7 @@ classdef Analysis
             % Create interpolation method
             interpolation = InterpolatedMethods(X_trained, Y_trained);
 
-            linear_function = interpolation.piecewiseLinearApproximation();
+            linear_function = interpolation.leastSquareApproximationLinear();
 
             cubic_function = interpolation.leastSquareApproximationCubic();
 
@@ -117,9 +117,9 @@ classdef Analysis
             min_RMSD = min([RMSD_polynomial, RMSD_linear, RMSD_cubic]);
             forecastPrices = zeros(totalTestedData, 1);
             
-            fprintf("Polynomial function's RMSD is %.4f\n", RMSD_polynomial);
-            fprintf("Linear function's RMSD is %.4f\n", RMSD_linear);
-            fprintf("cubic function's RMSD is %.4f\n", RMSD_cubic);
+            fprintf("Polynomial function's RMSD between tested data and its forecast prices for the next 30 dates is %.4f\n", RMSD_polynomial);
+            fprintf("Linear function's RMSD between tested data and its forecast prices for the next 30 dates is %.4f\n", RMSD_linear);
+            fprintf("cubic function's RMSD between tested data and its forecast prices for the next 30 dates is %.4f\n", RMSD_cubic);
 
             if (min_RMSD == RMSD_polynomial)
                 forecastPrices = Y_expected_polynomial;
@@ -161,6 +161,8 @@ classdef Analysis
             fprintf("Actual best day to buy stock: %s\n", actualBuyDate);
             fprintf("Actual best day to sell stock: %s\n", actualSellDate);
             fprintf("Actual maximum profit is $%.4f\n", actualMaxProfit);
+            fprintf("If you buy stock on %s and sell it on %s as the best matched function suggests, your actual " + ...
+                "profit is %.2f.\n", buyDate, sellDate, closedPrices(find(dates == sellDate)) - closedPrices(find(dates == buyDate)));
         end
         
         function plotGraph(obj, dates, Y, Y_polynomial, Y_linear, Y_cubic, is_interpolation)

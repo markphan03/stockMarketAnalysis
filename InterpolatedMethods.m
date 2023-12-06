@@ -30,31 +30,36 @@ classdef InterpolatedMethods
             end
         end
 
-        function piecewise_function = piecewiseLinearApproximation(obj)
+        function linear_function = leastSquareApproximationLinear(obj)
             X = obj.X;
             Y = obj.Y;
             n = numel(X);
-            max_error = 5;
-            begin = [X(1), Y(1)];
-            S_lower = -Inf;
-            S_upper = Inf;
-        
-            for i = 1:(n - 1)
-                S_lower_prime = max(S_lower, obj.slope(begin, [X(i+1), Y(i+1) - max_error]));
-                S_upper_prime = min(S_upper, obj.slope(begin, [X(i+1), Y(i+1) + max_error]));  
-                if S_lower_prime <= S_upper_prime
-                    S_lower = S_lower_prime;
-                    S_upper = S_upper_prime;              
-                else
-                    begin = [X(i), obj.f(S_lower, S_upper, X(i), begin(1), begin(2))];
-                    S_lower = obj.slope(begin, [X(i+1), Y(i+1) - max_error]);
-                    S_upper = obj.slope(begin, [X(i+1), Y(i+1) + max_error]);
-                end
+            
+            sumxi_square = 0;
+            for i = 1:n
+                sumxi_square = sumxi_square + X(i)^2;
             end
-        
-            fprintf('Approximated linear function is ');
-            fprintf('f(x) = %.4f(x - %.4f) + %.4f\n', (S_lower + S_upper)/2, begin(1), begin(2));
-            piecewise_function = @(x) (S_lower + S_upper)/2 * (x - begin(1)) + begin(2);
+
+            sumxi = 0;
+            for i = 1:n
+                sumxi = sumxi + X(i);
+            end
+
+            sumyi = 0;
+            for i = 1:n
+                sumyi = sumyi + Y(i);
+            end
+
+            sumxi_yi = 0;
+            for i = 1:n
+                sumxi_yi = sumxi_yi + X(i) * Y(i);
+            end
+
+            a0 = (sumxi_square * sumyi - sumxi_yi * sumxi) / (n * sumxi_square - sumxi^2);
+            a1 = (n * sumxi_yi - sumxi * sumyi) / (n * sumxi_square - sumxi^2);
+            fprintf('Approximated linear function is ')
+            fprintf('f(x) = %.4fx + %.4f\n', a1, a0);
+            linear_function = @(x) a1 * x + a0;
         end
 
         function cubic_function = leastSquareApproximationCubic(obj)
